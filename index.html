@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Милый Бот</title>
+    
+    <meta name="theme-color" content="#f4f0fb" id="meta-theme-color">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f0fb;
+            /* ИСПРАВЛЕНО: бд вместо бг */
+            --bg-image: url('bd_day.jpg'); 
+            --bg-gradient: linear-gradient(135deg, rgba(244, 240, 251, 0.6), rgba(230, 220, 250, 0.6));
+            
+            --card-bg: rgba(255, 255, 255, 0.55);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --card-shadow: 0 20px 40px rgba(167, 139, 250, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            
+            --text-color: #3b2a45;
+            --h1-color: #7e57c2;
+            --h1-shadow: 0 1px 2px rgba(255,255,255,0.8);
+
+            --btn-menu-bg: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
+            --btn-menu-text: #ffffff;
+            --btn-menu-shadow: 0 8px 24px rgba(167, 139, 250, 0.4);
+
+            --btn-action-bg: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
+            --btn-action-text: #ffffff;
+            --btn-action-shadow: 0 6px 16px rgba(192, 132, 252, 0.3);
+            
+            --btn-meme-bg: linear-gradient(135deg, #a78bfa 0%, #93c5fd 100%);
+            --btn-meme-text: #ffffff;
+            --btn-meme-shadow: 0 6px 16px rgba(167, 139, 250, 0.3);
+
+            --btn-movie-bg: linear-gradient(135deg, #c4b5fd 0%, #e9d5ff 100%);
+            --btn-movie-text: #4c1d95;
+            --btn-movie-shadow: 0 6px 16px rgba(196, 181, 253, 0.4);
+
+            --btn-hug-bg: linear-gradient(135deg, #f9a8d4 0%, #fbcfe8 100%);
+            --btn-hug-text: #831843;
+            --btn-hug-shadow: 0 6px 16px rgba(249, 168, 212, 0.4);
+
+            --message-box-bg: rgba(255, 255, 255, 0.4);
+            --message-box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 4px 12px rgba(167, 139, 250, 0.08);
+            
+            --mood-bg: rgba(255, 255, 255, 0.4);
+            --mood-hover: rgba(167, 139, 250, 0.2);
+
+            --skeleton-bg: rgba(255, 255, 255, 0.2);
+            --skeleton-shine: rgba(255, 255, 255, 0.6);
+        }
+
+        body.night-mode {
+            --bg-color: #0f1123;
+            /* ИСПРАВЛЕНО: бд вместо бг */
+            --bg-image: url('bd_night.jpg'); 
+            --bg-gradient: linear-gradient(135deg, rgba(15, 17, 35, 0.8), rgba(15, 17, 35, 0.95));
+            
+            --card-bg: rgba(30, 27, 75, 0.6);
+            --card-border: rgba(167, 139, 250, 0.2);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            
+            --text-color: #e2e8f0;
+            --h1-color: #c4b5fd; 
+            --h1-shadow: 0 2px 4px rgba(0,0,0,0.6);
+
+            --btn-menu-bg: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+            --btn-menu-text: #ffffff;
+            --btn-menu-shadow: 0 8px 24px rgba(109, 40, 217, 0.5);
+
+            --btn-action-bg: linear-gradient(135deg, #7e22ce 0%, #a21caf 100%);
+            --btn-action-text: #ffffff;
+            --btn-action-shadow: 0 6px 16px rgba(126, 34, 206, 0.4);
+            
+            --btn-meme-bg: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            --btn-meme-text: #bfdbfe;
+            --btn-meme-shadow: 0 6px 16px rgba(30, 58, 138, 0.5);
+
+            --btn-movie-bg: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+            --btn-movie-text: #e0e7ff;
+            --btn-movie-shadow: 0 6px 16px rgba(49, 46, 129, 0.5);
+
+            --btn-hug-bg: linear-gradient(135deg, #831843 0%, #4c0519 100%);
+            --btn-hug-text: #fce7f3;
+            --btn-hug-shadow: 0 6px 16px rgba(131, 24, 67, 0.5);
+
+            --message-box-bg: rgba(30, 27, 75, 0.4);
+            --message-box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0, 0, 0, 0.4);
+            
+            --mood-bg: rgba(30, 27, 75, 0.4);
+            --mood-hover: rgba(139, 92, 246, 0.3);
+
+            --skeleton-bg: rgba(30, 27, 75, 0.4);
+            --skeleton-shine: rgba(167, 139, 250, 0.1);
+        }
+
+        html {
+            background-color: var(--bg-color);
+            transition: background-color 0.5s ease;
+        }
+
+        body {
+            background-color: transparent;
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            justify-content: flex-start;
+            min-height: 100vh;
+            min-height: 100dvh; 
+            margin: 0;
+            padding: calc(60px + env(safe-area-inset-top)) 15px calc(30px + env(safe-area-inset-bottom)) 15px;
+            box-sizing: border-box;
+            text-align: center;
+            transition: color 0.5s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior-y: none;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0; bottom: 0; left: 0; right: 0;
+            z-index: -1; 
+            background-color: var(--bg-color);
+            background-image: var(--bg-gradient), var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-color 0.5s ease;
+            pointer-events: none;
+        }
+
+        #particles-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            bottom: -20px;
+            background: var(--h1-color);
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: floatParticle linear infinite;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+        }
+
+        .top-controls {
+            position: fixed;
+            top: calc(15px + env(safe-area-inset-top));
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 500;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            color: var(--h1-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s, color 0.5s;
+            padding: 0;
+        }
+        .icon-btn:active { transform: scale(0.88); }
+        .icon-btn svg { width: 20px; height: 20px; transition: transform 0.4s; }
+        .icon-btn.playing svg { animation: musicPulse 1.5s infinite alternate; }
+        
+        @keyframes musicPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            padding: 24px 15px;
+            border-radius: 32px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+            margin-bottom: 20px;
+            z-index: 10;
+            animation: cardBreathe 6s ease-in-out infinite;
+        }
+
+        @keyframes cardBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.015); }
+        }
+
+        h1 {
+            font-size: 15.5px;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            line-height: 1.3;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--h1-color);
+            text-shadow: var(--h1-shadow);
+            transition: color 0.5s ease;
+            white-space: nowrap; 
+            width: 100%;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
+
+        .content-area {
+            width: 100%;
+            height: 260px; 
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: var(--message-box-bg);
+            box-shadow: var(--message-box-shadow);
+        }
+
+        .message-box, .media-box {
+            width: 100%;
+            height: 100%;
+            display: none; 
+            border-radius: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.5;
+            overflow: hidden;
+        }
+
+        .message-box {
+            padding: 24px;
+            background: transparent;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+            word-wrap: break-word;
+            z-index: 10; /* Чтобы текст был поверх видео, если они наложатся */
+        }
+
+        #mediaDisplay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .movie-quote-text {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            font-style: italic;
+            letter-spacing: -0.2px;
+            display: none;
+        }
+        .movie-meta-info {
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.7;
+            color: var(--h1-color);
+            display: none;
+        }
+
+        .media-box {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+            padding: 0;
+        }
+
+        .media-box img, .media-box video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; 
+            height: 100%;
+            display: block;
+            border-radius: 0;
+        }
+
+        #funnyImage { object-fit: contain; }
+        #introVideo { object-fit: cover; }
+
+        .skeleton-loader {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--skeleton-bg);
+            display: none;
+            background-image: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .mood-tracker {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 16px;
+            background: var(--mood-bg);
+            padding: 8px 12px;
+            border-radius: 18px;
+            box-sizing: border-box;
+            border: 1px solid var(--card-border);
+        }
+
+        .mood-btn {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
+            filter: grayscale(0.5);
+            padding: 6px;
+            border-radius: 50%;
+        }
+        .mood-btn:hover, .mood-btn:active {
+            transform: scale(1.3);
+            filter: grayscale(0);
+            background: var(--mood-hover);
+        }
+        .mood-btn.selected {
+            filter: grayscale(0);
+            transform: scale(1.2);
+            background: var(--mood-hover);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        button {
+            border: none;
+            padding: 16px 20px;
+            font-size: 15px;
+            font-family: inherit;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            border-radius: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s, background 0.5s;
+            display: flex; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button span { position: relative; z-index: 2; pointer-events: none; }
+        
+        button:active { transform: scale(0.95); box-shadow: none; }
+
+        #toggleMenuBtn {
+            background: var(--btn-menu-bg);
+            color: var(--btn-menu-text);
+            box-shadow: var(--btn-menu-shadow);
+            z-index: 10;
+            position: relative;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, margin-top 0.3s ease;
+        }
+
+        .menu-container.active {
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        #actionButton { background: var(--btn-action-bg); color: var(--btn-action-text); box-shadow: var(--btn-action-shadow); }
+        #memeButton { background: var(--btn-meme-bg); color: var(--btn-meme-text); box-shadow: var(--btn-meme-shadow); }
+        #movieButton { background: var(--btn-movie-bg); color: var(--btn-movie-text); box-shadow: var(--btn-movie-shadow); }
+        #hugButton { background: var(--btn-hug-bg); color: var(--btn-hug-text); box-shadow: var(--btn-hug-shadow); }
+
+        #hearts-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .heart {
+            position: absolute;
+            bottom: -20px;
+            font-size: 24px;
+            animation: floatUp 2.5s linear forwards;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-20vh) scale(1) rotate(15deg); }
+            80% { opacity: 1; }
+            100% { transform: translateY(-110vh) scale(1.2) rotate(-15deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-layer"></div>
+    <div id="particles-container"></div>
+    <div id="hearts-container"></div>
+
+    <audio id="bgMusic" loop src="music/bg.mp3"></audio>
+
+    <div class="top-controls">
+        <button class="icon-btn" id="musicToggleBtn" aria-label="Включить музыку">
+            <svg id="musicIcon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+        </button>
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Сменить тему">
+            <svg id="themeIcon" viewBox="0 0 24 24" fill="currentColor"></svg>
+        </button>
+    </div>
+
+    <div class="card">
+        <h1>✨ Иногда нужно немного тепла ✨</h1>
+
+        <div class="content-area">
+            <!-- Добавили стили, чтобы greeting показывался поверх видео -->
+            <div class="message-box" id="messageDisplay" style="display: flex; position: absolute; z-index: 20; background: rgba(0,0,0,0.3); border-radius: 20px;">тыкой сюдой 🥺</div>
+
+            <div class="media-box" id="mediaDisplay">
+                <video id="introVideo" autoplay loop muted playsinline>
+                    <!-- Изменили путь, чтобы подхватывало из корня -->
+                    <source src="intro.mp4" type="video/mp4">
+                    <source src="videos/intro.mp4" type="video/mp4">
+                </video>
+                <div class="skeleton-loader" id="memeSkeleton"></div>
+                <img id="funnyImage" alt="смешная картинка" style="display: none;">
+            </div>
+        </div>
+
+        <div class="mood-tracker" id="moodTracker">
+            <button class="mood-btn" data-mood="Радость 🥰">🥰</button>
+            <button class="mood-btn" data-mood="Спокойствие 😊">😊</button>
+            <button class="mood-btn" data-mood="Грусть 🥺">🥺</button>
+            <button class="mood-btn" data-mood="Усталость 😴">😴</button>
+            <button class="mood-btn" data-mood="Злость 😡">😡</button>
+        </div>
+
+        <button id="toggleMenuBtn"><span>✨ Выбрать действие ▼</span></button>
+        
+        <div class="menu-container" id="menuContainer">
+            <button id="hugButton"><span>🤗 Обнять</span></button>
+            <button id="actionButton"><span>💖 Получить милоту</span></button>
+            <button id="memeButton"><span>😂 Показать смешное</span></button>
+            <button id="movieButton"><span>🎬 Момент из фильма</span></button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tg = window.Telegram && window.Telegram.WebApp;
+            
+            if (tg) {
+                tg.ready(); 
+                tg.expand();
+            }
+
+            function hapticFeedback(type = 'light') {
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred(type);
+                }
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            let userName = urlParams.get('uname');
+            if (!userName && tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const u = tg.initDataUnsafe.user;
+                userName = u.first_name || "Без имени";
+                if (u.last_name) userName += " " + u.last_name;
+                if (u.username) userName += " (@" + u.username + ")";
+            }
+            if (!userName) userName = "Неизвестный пользователь";
+
+            function logAction(actionName) {
+                const now = new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' });
+                fetch('/log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: actionName, time: now, user: userName })
+                }).catch(err => console.log('Ошибка логирования', err));
+            }
+
+            const particlesContainer = document.getElementById('particles-container');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particlesContainer.appendChild(particle);
+            }
+
+            const messageDisplay = document.getElementById('messageDisplay');
+            let typingTimeout;
+            
+            function typeWriter(element, text, speed = 30) {
+                clearTimeout(typingTimeout);
+                element.innerHTML = ''; 
+                let i = 0;
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        typingTimeout = setTimeout(type, speed);
+                    }
+                }
+                type();
+            }
+
+            function getGreeting() {
+                const hour = new Date().getHours();
+                if (hour >= 5 && hour < 12) return "Доброе утро! Надеюсь, ты выспалась ☀️";
+                if (hour >= 12 && hour < 18) return "Как проходит твой день? Я всегда рядом ✨";
+                if (hour >= 18 && hour < 23) return "Хорошего вечера! Не забудь отдохнуть 🌙";
+                return "Уже поздно, не забудь поспать, чтобы завтра быть полной сил 💜";
+            }
+
+            // Выводим приветствие
+            setTimeout(() => {
+                typeWriter(messageDisplay, getGreeting(), 40);
+            }, 500);
+
+            // Убираем приветствие при первом клике на любую кнопку, чтобы не мешало видео
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (messageDisplay.style.display === 'flex' && messageDisplay.style.position === 'absolute') {
+                        messageDisplay.style.display = 'none';
+                    }
+                });
+            });
+
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const metaThemeColor = document.getElementById('meta-theme-color');
+            const ICON_SUN = '<path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>';
+            const ICON_MOON = '<path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"/>';
+            
+            function applyTheme(isNight) {
+                if (isNight) {
+                    document.body.classList.add('night-mode');
+                    themeIcon.innerHTML = ICON_SUN; 
+                    if(metaThemeColor) metaThemeColor.setAttribute('content', '#0f1123');
+                } else {
+                    document.body.classList.remove('night-mode');
+                    themeIcon.innerHTML = ICON_MOON; 
+                    if(metaThemeColor) metaThemeColor.setAttribute('content', '#f4f0fb');
+                }
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'night') {
+                applyTheme(true);
+            } else if (savedTheme === 'day') {
+                applyTheme(false);
+            } else {
+                applyTheme(new Date().getHours() >= 19 || new Date().getHours() < 9);
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                hapticFeedback('medium');
+                const isNight = !document.body.classList.contains('night-mode');
+                applyTheme(isNight);
+                localStorage.setItem('theme', isNight ? 'night' : 'day');
+            });
+
+            const bgMusic = document.getElementById('bgMusic');
+            const musicToggleBtn = document.getElementById('musicToggleBtn');
+            let isMusicPlaying = false;
+
+            const savedMusic = localStorage.getItem('music');
+            if (savedMusic === 'on') {
+                musicToggleBtn.classList.add('playing');
+                isMusicPlaying = true;
+                document.body.addEventListener('click', function playMusicOnce() {
+                    if (isMusicPlaying) {
+                        bgMusic.volume = 0.3;
+                        bgMusic.play().catch(e => console.log("Аудио заблокировано"));
+                    }
+                    document.body.removeEventListener('click', playMusicOnce);
+                }, { once: true });
+            }
+
+            musicToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hapticFeedback('light');
+                if (isMusicPlaying) {
+                    bgMusic.pause();
+                    musicToggleBtn.classList.remove('playing');
+                    localStorage.setItem('music', 'off');
+                } else {
+                    bgMusic.volume = 0.3; 
+                    bgMusic.play().catch(e => console.log("Аудио заблокировано"));
+                    musicToggleBtn.classList.add('playing');
+                    localStorage.setItem('music', 'on');
+                }
+                isMusicPlaying = !isMusicPlaying;
+            });
+
+            const memeSkeleton = document.getElementById('memeSkeleton');
+            const funnyImage = document.getElementById('funnyImage');
+
+            const moodButtons = document.querySelectorAll('.mood-btn');
+            moodButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    hapticFeedback('soft');
+                    moodButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    const moodText = btn.getAttribute('data-mood');
+                    logAction(`Настроение: ${moodText}`);
+                });
+            });
+
+            const heartsContainer = document.getElementById('hearts-container');
+            function spawnHearts() {
+                const emojis = ['💖', '💗', '💓', '💕', '💘', '❤️'];
+                for (let i = 0; i < 20; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                    heart.style.animationDelay = (Math.random() * 0.5) + 's';
+                    heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
+                    heartsContainer.appendChild(heart);
+                    setTimeout(() => { heart.remove(); }, 3000);
+                }
+            }
+
+            const cuteMessages = [
+                "Твои тиктоки - это отдельный вид искусства. Я готов смотреть их с тобой вечно, особенно под твой смех ^^",
+                "Мне нравится, как ты рассказываешь про свои приключения в мадже. Твои глаза горят, и это так.. вдохновляет..)",
+                "Ты невероятная. И я готов повторять это каждый день, чтобы ты никогда не забывала, какая ты классная)",
+                "Ты вдохновляешь меня на всё. Даже на эти комплименты. Так что, если что, ты сама виновата, хмф, ахахах)",
+                "Общение с тобой - лучшее начало дня. Всегда рад видеть твои сообщения по утрам)",
+                "С тобой любое времяпровождение становится в разы интереснее. Даже тортики не нужны)",
+                "Ты как котёнок: ласковая, игривая, и иногда выпускаешь коготки. Но я готов к любым царапинам",
+                "Ты классный человек. Я даже не думал, что такие интересные люди существуют. А теперь ты есть в моей жизни..",
+                "Когда ты улыбаешься, у меня внутри становится так тепло. Это самая искренняя улыбка на свете ^^",
+                "Я обожаю, как ты заботишься обо мне. Ты даже напоминаешь про то, чтобы я поел)",
+                "Ты как Люмин: тихо, мирно, но если надо - покажешь когти. И я обожаю обе твои стороны)",
+                "В майнкрафте ты строишь дома, а вокруг тебя всегда как-то уютно. И я не против, чтобы ты продолжала)",
+                "Твоя серая пижамка - это национальное достояние. В ней ты выглядишь максимально уютно и по-домашнему ^^",
+                "Когда ты кидаешь мне кружок с котиком, я понимаю: вот оно, счастье. А когда ты сама в кадре - я умираю от смеха ^^. Хмф ♡",
+                "Ты умеешь быть дерзкой, но я знаю, что внутри ты - пушистик, который любит обнимашки. И я готов обнимать тебя сутками ^^",
+                "Твой голос - мой личный саундтрек) Даже когда ты просто говоришь «хмф»..",
+                "Ты важнее задач, дедлайнов и всех этих 'надо'. Серьёзно.",
+                "Если хочешь, я просто буду на связи. Не лечить, не спасать, не требовать ответа. Просто буду.",
+                "Давай сегодня без подвигов: вода, еда и не ругать себя. Остальное как получится.",
+                "Можно не держать лицо. Со мной можно быть настоящим, даже если сейчас ты уставшая)",
+                "Хочешь скинь мем или стикер. Не хочешь, я скину. Напиши, и я пришлю)",
+                "Напоминаю: тебе не надо быть удобным, чтобы тебя уважали и ценили.",
+                "Если сегодня силы есть только на 'лежать и существовать', этого уже достаточно)",
+                "Я не знаю всех правильных слов, но могу быть рядом. Это тоже немало.",
+                "Ты не задача, которую срочно надо решить. Тебе просто тяжело, и это нормально)",
+                "Ты справляешься лучше, чем кажется. А если нет, это тоже нормально, я не уйду)",
+                "Хочешь расскажи, хочешь нет. Можем просто помолчать, я не буду лезть ^^",
+                "Можешь писать мне в три ночи с 'ничего не случилось, просто плохо'. Это вообще не странно)",
+                "Если хочешь, я просто буду на связи. Не лечить, не спасать, не требовать ответа. Просто буду ^^",
+                "Можно быть уставшим, злым, грустным. Ты всё равно важный для меня человек)",
+                "Твоё состояние не делает тебя обузой. Оно делает тебя человеком, которому нужна поддержка)",
+                "Ты даже не представляешь, как сильно я жду твоих сообщений. Каждый раз улыбаюсь, когда вижу твое имя на экране ^^",
+                "Твои идеи для построек в майне всегда такие крутые. И ты сама тоже самая крутая)",
+                "С тобой всегда интересно общаться. Ты замечаешь такие детали, которые другие пропускают)",
+                "Ты имеешь полное право просто лежать и ничего не делать. Я рядом, могу даже одеялко поправить ^^",
+                "Твои голосовые можно слушать бесконечно. Особенно когда ты начинаешь смеяться в конце)",
+                "В этой серой пижамке ты выглядишь так по-домашнему, что хочется просто посидеть рядом с чашкой чая ♡",
+                "Мне кажется, если бы ты была котенком, ты была бы самым избалованным и любимым котенком на свете. И я бы с радостью тебя баловал)",
+                "Я могу слушать твои истории про тиктоки хоть до утра. Мне нравится, как ты увлекаешься тем, что тебе интересно ^^",
+                "Мне очень нравится ход твоих мыслей. С тобой можно обсудить что угодно и не бояться быть непонятым)",
+                "Не забудь покушать, пожалуйста. Мне важно, чтобы ты была сытой и довольной ^^",
+                "Когда ты злишься и говоришь 'хмф', это выглядит так мило, что я сразу хочу извиниться и загладить свою вину)",
+                "С тобой мне хочется делиться всем на свете. Даже самыми глупыми мыслями, которые приходят в голову)",
+                "Даже через экран я чувствую, какой ты хороший и светлый человек. Пришли мне виртуальные обнимашки, пожалуйста ♡",
+                "Ты не обязана быть идеальной каждый день. Я ценю тебя любой: уставшей, веселой или немного вредной)",
+                "Люмин отдыхает по сравнению с твоей харизмой. Ты умеешь быть тихой, но при этом притягиваешь всё мое внимание)",
+                "Мне очень нравится болтать с тобой по ночам. Даже когда мы просто молчим, мне кажется, что этот момент особенный ^^",
+                "Твоя улыбка - это самое лучшее лекарство от любой моей хандры. Улыбнись, пожалуйста, если читаешь это)",
+                "Я хочу, чтобы у нас было еще много совместных моментов. И в майне, и в реальной жизни)",
+                "Если тебе вдруг станет грустно, просто напиши мне. Я не буду давать советы, если ты не попросишь. Просто побуду рядом ^^",
+                "Каждый раз, когда ты заходишь в игру или пишешь мне, мой день становится в разы лучше. Ты мой личный лучик света)"
+            ];
+
+            const dailyQuestions = [
+                "Какая твоя любимая песня прямо сейчас?",
+                "Что тебя сегодня порадовало больше всего?",
+                "О чем ты мечтаешь в последнее время?",
+                "Какой твой любимый момент из нашего общения?",
+                "Что бы ты съела прямо сейчас, если бы могла?",
+                "Какая твоя любимая пора года и почему?",
+                "Что помогает тебе расслабиться после долгого дня?",
+                "Если бы мы могли отправиться куда угодно, куда бы ты хотела?",
+                "Что тебе сейчас нужно больше: объятия, вкусняшка или просто поспать?",
+                "Какой у тебя любимый фильм или мультик?",
+                "Чего ты добилась за последнее время, чем можно гордиться?",
+                "Что бы ты сказала себе 10 лет назад?",
+                "Какая твоя самая большая мечта?",
+                "Что тебя заставляет смеяться до слез?"
+            ];
+
+            const funnyImages = [
+                "memes/1.jpg", "memes/2.jpg", "memes/3.jpg", "memes/4.jpg", "memes/5.jpg",
+                "memes/6.jpg", "memes/7.jpg", "memes/8.jpg", "memes/9.jpg", "memes/10.jpg",
+                "memes/11.jpg", "memes/12.jpg", "memes/13.jpg", "memes/14.jpg", "memes/15.jpg",
+                "memes/16.jpg", "memes/17.jpg", "memes/18.jpg", "memes/19.jpg", "memes/20.jpg",
+                "memes/21.jpg", "memes/22.jpg", "memes/23.jpg", "memes/24.jpg", "memes/25.jpg",
+                "memes/26.jpg", "memes/27.jpg", "memes/28.jpg", "memes/29.jpg", "memes/30.jpg",
+                "memes/31.jpg", "memes/32.jpg", "memes/33.jpg", "memes/34.jpg", "memes/35.jpg",
+                "memes/36.jpg", "memes/37.jpg", "memes/38.jpg", "memes/39.jpg", "memes/40.jpg",
+                "memes/41.jpg", "memes/42.jpg", "memes/43.jpg", "memes/44.jpg", "memes/45.jpg",
+                "memes/46.jpg", "memes/47.jpg", "memes/48.jpg", "memes/49.jpg", "memes/50.jpg",
+                "memes/51.jpg", "memes/52.jpg", "memes/53.jpg", "memes/54.jpg", "memes/55.jpg",
+                "memes/56.jpg", "memes/57.jpg", "memes/58.jpg", "memes/59.jpg", "memes/60.jpg",
+                "memes/61.jpg", "memes/62.jpg", "memes/63.jpg", "memes/64.jpg", "memes/65.jpg",
+                "memes/66.jpg", "memes/67.jpg", "memes/68.jpg", "memes/69.jpg", "memes/70.jpg",
+                "memes/71.jpg", "memes/72.jpg"
+            ];
+
+            const movieMoments = [
+                { title: "Эта замечательная жизнь", time: "~00:24:42", quote: "Знаешь, если бы говорил не я, я бы сказал, что ты самая хорошенькая девушка в городе" },
+                { title: "Перед рассветом", time: "~00:44:47", quote: "А потом, примерно через час просто смотрения друг на друга, они женятся" },
+                { title: "Перед рассветом", time: "~01:19:44", quote: "Ты видишь ту девушку? Да? Так вот, это наша единственная ночь вместе" },
+                { title: "Бессонница в Сиэтле", time: "~01:23:20", quote: "Это так красиво. Именно это я бы выбрала, если бы могла выбрать любое кольцо в мире" },
+                { title: "Вечное сияние чистого разума", time: "~01:15:03", quote: "Я люблю тебя уже очень давно" },
+                { title: "50 первых поцелуев", time: "~01:13:44", quote: "Он мог бы слетать на Луну и обратно, а Люси бы даже не узнала, что он уезжал" },
+                { title: "Дневник памяти", time: "~01:41:00", quote: "Самая лучшая любовь - та, что пробуждает душу" },
+                { title: "Дневник памяти", time: "финальная сцена", quote: "Если ты птица, то и я птица" },
+                { title: "Лучше не бывает", time: "ближе к концу", quote: "Ты заставляешь меня хотеть стать лучше" },
+                { title: "Джерри Магуайер", time: "~01:54:41", quote: "Ты дополняешь меня" },
+                { title: "Джерри Магуайер", time: "~01:54:55", quote: "Ты сказала \"привет\" - и я твой" },
+                { title: "Ноттинг Хилл", time: "финальная сцена", quote: "Я просто девушка, стоящая перед парнем и просящая его полюбить её" },
+                { title: "Реальная любовь", time: "сцена с карточками", quote: "Для меня ты совершенна" },
+                { title: "Гордость и предубеждение", time: "~01:55:07", quote: "Ты околдовала меня, телом и душой" },
+                { title: "Когда Гарри встретил Салли", time: "финальная сцена", quote: "Я пришёл сюда сегодня, потому что когда понимаешь, что хочешь провести остаток жизни с кем-то, ты хочешь, чтобы этот остаток начался как можно скорее" },
+                { title: "День сурка", time: "ближе к финалу", quote: "Ты добра к незнакомцам и детям, а когда стоишь на снегу, ты похожа на ангела" },
+                { title: "Джуно", time: "ближе к концу", quote: "Ты, типа, самый классный человек, которого я когда-либо встречала, и тебе даже не нужно стараться" },
+                { title: "Виноваты звёзды", time: "~01:22:00", quote: "Ты такая красивая" },
+                { title: "Ла-Ла Ленд", time: "~01:21:50", quote: "Люди любят то, что другие люди любят страстно" },
+                { title: "Серебристые облака", time: "финальная сцена", quote: "Я люблю тебя. Я понял это в ту минуту, как встретил тебя" },
+                { title: "Она", time: "не указан", quote: "Я так сильно тебя люблю" },
+                { title: "Перед закатом", time: "не указан", quote: "Ты моя единственная" },
+                { title: "Неспящие в Сиэтле", time: "финальная сцена", quote: "Я хотела, чтобы это был ты. Я так сильно хотела, чтобы это был ты" },
+                { title: "Вам письмо", time: "финальная сцена", quote: "Я хотела, чтобы это был ты" },
+                { title: "Отец невесты", time: "не указан", quote: "Я знал, что никогда не смогу вспомнить, что в тот день было надето на Нине. Но я также знал, что никогда не забуду, как она выглядела" },
+                { title: "Крадущийся тигр, затаившийся дракон", time: "не указан", quote: "Я хотел бы, чтобы я никогда не просыпался" },
+                { title: "Кинг Конг", time: "финальная фраза", quote: "Это была красота, которая убила зверя" },
+                { title: "Мулен Руж!", time: "финальная песня", quote: "Самое великое, чему ты когда-либо научишься, - это просто любить и быть любимым в ответ" },
+                { title: "Гордость и предубеждение", time: "сцена первого предложения", quote: "Вы слишком щедры, чтобы путешествовать со мной" },
+                { title: "Эта замечательная жизнь", time: "~00:39:35", quote: "Ты выглядишь потрясающе! Ты выглядишь очень, очень потрясающе!" }
+            ];
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            const allMessages = [...cuteMessages, ...dailyQuestions];
+
+            let messageBag = [], imageBag = [], movieBag = [];
+            let lastMessage = null, lastImage = null, lastMovie = null;
+
+            function getNextItem(bag, originalArray, lastItem) {
+                if (bag.length === 0) {
+                    bag.push(...originalArray);
+                    shuffle(bag);
+                    if (bag.length > 1 && bag[bag.length - 1] === lastItem) {
+                        [bag[bag.length - 1], bag[0]] = [bag[0], bag[bag.length - 1]];
+                    }
+                }
+                return bag.pop();
+            }
+
+            const mediaDisplay = document.getElementById('mediaDisplay');
+            const introVideo = document.getElementById('introVideo');
+            const movieQuoteText = document.querySelector('.movie-quote-text');
+            const movieMetaInfo = document.querySelector('.movie-meta-info');
+
+            const toggleMenuBtn = document.getElementById('toggleMenuBtn');
+            const menuContainer = document.getElementById('menuContainer');
+            const actionButton = document.getElementById('actionButton');
+            const memeButton = document.getElementById('memeButton');
+            const movieButton = document.getElementById('movieButton');
+            const hugButton = document.getElementById('hugButton');
+
+            let isMenuOpen = false;
+            
+            toggleMenuBtn.addEventListener('click', () => {
+                hapticFeedback('medium');
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    menuContainer.classList.add('active');
+                    toggleMenuBtn.innerHTML = '<span>Свернуть меню ▲</span>';
+                } else {
+                    menuContainer.classList.remove('active');
+                    toggleMenuBtn.innerHTML = '<span>✨ Выбрать действие ▼</span>';
+                }
+            });
+
+            function hideAllScreens() {
+                clearTimeout(typingTimeout);
+                messageDisplay.style.display = 'none';
+                messageDisplay.style.position = 'relative'; // Сбрасываем абсолютное позиционирование
+                messageDisplay.style.background = 'transparent';
+                mediaDisplay.style.display = 'none';
+                introVideo.pause();
+                funnyImage.style.display = 'none';
+                memeSkeleton.style.display = 'none';
+            }
+
+            hugButton.addEventListener('click', () => {
+                hapticFeedback('heavy');
+                logAction('🤗 Крепко обнял(а)!');
+                spawnHearts();
+            });
+
+            actionButton.addEventListener('click', () => {
+                hapticFeedback('light');
+                logAction('💖 Получить милоту / Вопрос');
+                hideAllScreens();
+                messageDisplay.style.display = 'flex';
+                messageDisplay.style.opacity = 0;
+                messageDisplay.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    const nextMessage = getNextItem(messageBag, allMessages, lastMessage);
+                    lastMessage = nextMessage;
+                    messageDisplay.style.opacity = 1;
+                    messageDisplay.style.transform = 'scale(1)';
+                    typeWriter(messageDisplay, nextMessage, 30);
+                }, 200);
+            });
+
+            memeButton.addEventListener('click', () => {
+                hapticFeedback('soft');
+                logAction('😂 Показать смешное');
+                hideAllScreens();
+                mediaDisplay.style.display = 'flex';
+                introVideo.style.display = 'none';
+                mediaDisplay.style.opacity = 0;
+                mediaDisplay.style.transform = 'scale(0.95)';
+                
+                funnyImage.style.display = 'none';
+                memeSkeleton.style.display = 'block';
+
+                setTimeout(() => {
+                    const nextSrc = getNextItem(imageBag, funnyImages, lastImage);
+                    lastImage = nextSrc;
+                    funnyImage.onload = () => {
+                        memeSkeleton.style.display = 'none';
+                        funnyImage.style.display = 'block';
+                        mediaDisplay.style.opacity = 1;
+                        mediaDisplay.style.transform = 'scale(1)';
+                    };
+                    funnyImage.onerror = () => {
+                        memeSkeleton.style.display = 'none';
+                        funnyImage.style.display = 'block';
+                        funnyImage.alt = 'Не получилось загрузить 😔';
+                        mediaDisplay.style.opacity = 1;
+                        mediaDisplay.style.transform = 'scale(1)';
+                    };
+                    funnyImage.src = nextSrc;
+                }, 200);
+            });
+
+            movieButton.addEventListener('click', () => {
+                hapticFeedback('light');
+                logAction('🎬 Момент из фильма');
+                hideAllScreens();
+                messageDisplay.style.display = 'flex';
+                messageDisplay.style.opacity = 0;
+                messageDisplay.style.transform = 'scale(0.95)';
+
+                if (movieMoments.length === 0) return;
+
+                setTimeout(() => {
+                    const nextMovie = getNextItem(movieBag, movieMoments, lastMovie);
+                    lastMovie = nextMovie;
+
+                    messageDisplay.style.opacity = 1;
+                    messageDisplay.style.transform = 'scale(1)';
+                    messageDisplay.innerHTML = '';
+                    
+                    const quoteDiv = document.createElement('div');
+                    quoteDiv.className = 'movie-quote-text';
+                    quoteDiv.style.display = 'block';
+                    messageDisplay.appendChild(quoteDiv);
+
+                    const metaDiv = document.createElement('div');
+                    metaDiv.className = 'movie-meta-info';
+                    metaDiv.style.display = 'none';
+                    metaDiv.textContent = `🎬 ${nextMovie.title} • ${nextMovie.time}`;
+                    messageDisplay.appendChild(metaDiv);
+
+                    typeWriter(quoteDiv, `«${nextMovie.quote}»`, 35);
+                    
+                    setTimeout(() => {
+                        metaDiv.style.display = 'block';
+                    }, nextMovie.quote.length * 35 + 200);
+
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
